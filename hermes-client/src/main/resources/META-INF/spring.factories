@@ -1,0 +1,8 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.titan.hermes.client.aspect.HermesListenerAspect,\
+  org.titan.hermes.client.listener.HermesListerContainer,\
+  org.titan.hermes.client.network.MessageContainer,\
+  org.titan.hermes.client.temlate.HermesTemplate,\
+  org.titan.hermes.client.HermesClientBootStrap,\
+  org.titan.hermes.client.HermesClientHandler,\
+  org.titan.hermes.client.HermesInitlization
