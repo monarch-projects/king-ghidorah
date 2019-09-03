@@ -30,7 +30,25 @@ public class HermersServerBootStrap {
 
 	private EventLoopGroup workerGroup;
 
-	private DefaultEventExecutorGroup executors;
+	/**
+	 * {@link ChannelPipeline}
+	 * 	A user is supposed to have one or more {@link ChannelHandler}s in a pipeline to receive I/O events (e.g. read) and
+	 *  to request I/O operations (e.g. write and close).  For example, a typical server will have the following handlers
+	 *  in each channel's pipeline, but your mileage may vary depending on the complexity and characteristics of the
+	 *  protocol and business logic:
+	 *
+	 *  <ol>
+	 *  	<li>Protocol Decoder - translates binary data (e.g. {@link io.netty.buffer.ByteBuf}) into a Java object.</li>
+	 *  	<li>Protocol Encoder - translates a Java object into binary data.</li>
+	 *   	<li>Business Logic Handler - performs the actual business logic (e.g. database access).</li>
+	 *  </ol>
+	 *
+	 *  and it could be represented as shown in the following example:
+	 *
+	 *   <pre>
+	 *  static final {@link io.netty.util.concurrent.EventExecutorGroup} group = new {@link DefaultEventExecutorGroup}(16);
+	 */
+	private static final DefaultEventExecutorGroup executors = new DefaultEventExecutorGroup(16);
 
 	private static final String OS_NAME = System.getProperty("os.name");
 
@@ -46,7 +64,6 @@ public class HermersServerBootStrap {
 	public void start() throws Exception {
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		group(bootstrap);
-		this.executors = new DefaultEventExecutorGroup(50);
 		bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 			protected void initChannel(SocketChannel socketChannel) throws Exception {
 				socketChannel.pipeline().addLast(new DelimiterBasedFrameDecoder(10000,
@@ -66,7 +83,6 @@ public class HermersServerBootStrap {
 	}
 
 	private void group(ServerBootstrap bootstrap) {
-		this.executors = new DefaultEventExecutorGroup(Runtime.getRuntime().availableProcessors() * 2);
 		if (OS_NAME.toLowerCase().contains("mac")) {
 			this.bossGroup = new KQueueEventLoopGroup();
 			this.workerGroup = new KQueueEventLoopGroup();
