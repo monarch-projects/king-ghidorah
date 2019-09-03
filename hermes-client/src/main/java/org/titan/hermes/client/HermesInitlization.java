@@ -1,13 +1,15 @@
 package org.titan.hermes.client;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.EnvironmentAware;
+import org.springframework.context.EnvironmentAware;;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.retry.annotation.EnableRetry;
 import org.titan.hermes.client.listener.HermesListerContainer;
@@ -45,12 +47,17 @@ public class HermesInitlization implements BeanPostProcessor, EnvironmentAware, 
 
     private Set<String> listenQueues = new HashSet<>();
 
+	@Override
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+		return bean;
+	}
 
+	@Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        Class<?> clz = bean.getClass();
+		Class<?> clz = AopUtils.getTargetClass(bean);
         Method[] methods = clz.getDeclaredMethods();
         for (Method method : methods) {
-            if (method.isAnnotationPresent(HermesListener.class)) {
+			if (method.isAnnotationPresent(HermesListener.class)) {
                 log.info("find hermes handler,{}:{}", beanName, method.getName());
                 this.processListener(method, bean);
             }
@@ -76,7 +83,7 @@ public class HermesInitlization implements BeanPostProcessor, EnvironmentAware, 
 
 
     public void processListener(Method method, Object bean) {
-        HermesListener listener = method.getDeclaredAnnotation(HermesListener.class);
+        HermesListener listener = AnnotationUtils.findAnnotation(method, HermesListener.class);
         org.titan.hermes.client.listener.HermesListener hermesListener = new org.titan.hermes.client.listener.HermesListener();
         ListenerMetaInfo info = ListenerMetaInfo.of(Arrays.asList(listener.queues()), listener.key());
 

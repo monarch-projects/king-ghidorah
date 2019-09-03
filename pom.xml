@@ -12,6 +12,7 @@
         <module>hermes-client</module>
         <module>hermes-server</module>
         <module>hermes-common</module>
+        <module>hermes-example</module>
     </modules>
 
     <dependencyManagement>
@@ -22,11 +23,6 @@
                 <version>4.1.36.Final</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-autoconfigure</artifactId>
-                <version>2.1.7.RELEASE</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -95,6 +91,7 @@
                 <artifactId>protostuff-core</artifactId>
                 <version>1.0.12</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
